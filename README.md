@@ -20,7 +20,7 @@ Section properties and area tools addon.
 
 ## Installation
 
-see releases. 
+[see releases. ](https://github.com/the-tool-store/alibre-cross-section-tools-addon/releases/tag/PoC%2Fpre-alpha)
 
 ### Additional Resources
 
