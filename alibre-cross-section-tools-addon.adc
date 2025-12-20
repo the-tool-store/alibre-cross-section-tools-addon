@@ -1,0 +1,10 @@
+﻿<AlibreDesignAddOn specificationVersion="2" friendlyName="alibre-cross-section-tools-addon">
+<Author name="" link="alibre-cross-section-tools-addon"/>
+   <Copyright>Copyright (c) 2025</Copyright>
+   <DLL type="Managed" loadedWhen="Startup" location="alibre-cross-section-tools-addon.dll"/>
+   <Icon location="logo.ico"/> 
+   <Menu text="alibre-cross-section-tools-addon"/>
+   <Description>alibre-cross-section-tools-addon</Description> 
+   <Workspace type="Always"/>
+   <Property name="Identifier" value="alibre-cross-section-tools-addon"/>
+</AlibreDesignAddOn>
