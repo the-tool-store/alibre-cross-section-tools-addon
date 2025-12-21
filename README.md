@@ -24,7 +24,7 @@ Section properties and area tools addon.
 
 ### Additional Resources
 
-N/A
+[information of update](https://www.notion.so/alibre-cross-section-tools-addon-Notes-2d02782294488049981fd60306d1c2ee?source=copy_link)
 
 ## Contribution
 
