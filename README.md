@@ -15,7 +15,7 @@ Section properties and area tools addon.
 ![alt text](SNAG-0013.png)
 
 - PoC/pre-alpha addon
-- calculations needs expert review
+- calculations needs expert review ( I reviewed the math and it appears to be accurate )
 - circular faces aren't working
 
 ## Installation
