@@ -10,7 +10,7 @@ Section properties and area tools addon.
 
 ![alt text](SNAG-0014.png)
 
-## Known Uses
+## Known Issues
 
 ![alt text](SNAG-0013.png)
 
