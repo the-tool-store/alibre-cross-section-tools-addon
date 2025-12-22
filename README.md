@@ -10,6 +10,12 @@ Section properties and area tools addon.
 
 ![alt text](SNAG-0014.png)
 
+If using the installer the script installation location is:
+
+C:\Program Files\Alibre Design Add-Ons\alibre-cross-section-tools-addon\scripts\Template.py
+
+You can modify the script, but this is not recommended. Downloading the source code and compiling the addon with your changes is the recommended approach. 
+
 ## Known Issues
 
 ![alt text](SNAG-0013.png)
