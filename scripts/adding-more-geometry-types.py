@@ -13,7 +13,7 @@ DECIMALS_ANGLE = 2
 UNIT_OPTIONS = ['mm', 'cm', 'm', 'in', 'ft']
 IDX_FACE = 0
 IDX_UNITS = 1
-
+ScriptName = "Dev"
 class CircleProperties:
     """Analytical properties for a solid circular cross-section"""
     
