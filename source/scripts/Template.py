@@ -218,6 +218,19 @@ def project_to_2d(vertices_3d, origin, u_axis, v_axis):
         v = vec3_dot(rel, v_axis)
         vertices_2d.append([u, v])
     return vertices_2d
+def order_vertices_by_angle(vertices_2d):
+    # Order projected 2D points by angle about their centroid.
+    # Mirrors the ordering approach used in adding-more-geometry-types.py's
+    # project_to_2d. Note: angular sort is imperfect for concave polygons;
+    # this is a known limitation but matches file 1 for consistency.
+    n = len(vertices_2d)
+    if n < 3:
+        return vertices_2d
+    cx = sum(p[0] for p in vertices_2d) / n
+    cy = sum(p[1] for p in vertices_2d) / n
+    def angle_key(p):
+        return math.atan2(p[1] - cy, p[0] - cx)
+    return sorted(vertices_2d, key=angle_key)
 def remove_duplicate_vertices(vertices_2d, tol=VERTEX_TOLERANCE):
     if len(vertices_2d) < 2:
         return vertices_2d
@@ -239,17 +252,40 @@ def extract_ordered_boundary_from_edges(face):
     except:
         return None
     edge_segments = []
+    has_curved_edge = False
     for edge in edges:
+        # Detect curved edges (arcs/circles) so we don't silently treat them
+        # as straight chords. The AlibreScript edge API exposed in these
+        # scripts only provides GetVertices()/Diameter/Length -- there is no
+        # method to sample intermediate points along a curve -- so a curved
+        # edge can only be approximated by the points GetVertices() returns.
+        try:
+            diam = edge.Diameter
+            if diam is not None and diam > 0:
+                has_curved_edge = True
+        except:
+            pass
         try:
             verts = edge.GetVertices()
-            if verts and len(verts) >= 2:
-                v1 = [verts[0].X, verts[0].Y, verts[0].Z]
-                v2 = [verts[1].X, verts[1].Y, verts[1].Z]
-                edge_segments.append((v1, v2))
+            if not verts:
+                continue
+            # Use ALL vertices the edge exposes, in order, rather than only
+            # the first two. If a curved edge ever returns intermediate sample
+            # points they will be included; if it only returns endpoints, this
+            # degrades gracefully to the original chord behavior.
+            pts = [[v.X, v.Y, v.Z] for v in verts]
+            if len(pts) >= 2:
+                for k in range(len(pts) - 1):
+                    edge_segments.append((pts[k], pts[k + 1]))
         except:
             continue
     if not edge_segments:
         return None
+    # A curved boundary (circle/arc) that only exposed endpoints is
+    # approximated as straight chords here. The annulus/circle analytical
+    # paths do not exist in this file, so this chord approximation is the
+    # safest available behavior; accuracy for curved faces is limited.
+    _ = has_curved_edge
     boundary = [edge_segments[0][0], edge_segments[0][1]]
     used = [False] * len(edge_segments)
     used[0] = True
@@ -290,10 +326,13 @@ def extract_face_vertices_simple(face):
         pass
     return vertices_3d
 def extract_face_boundary(face):
+    # Returns (vertices_3d, is_ordered). is_ordered is True when the boundary
+    # came from the edge-walk (already in sequential boundary order) and False
+    # when it came from the unordered face-vertex fallback.
     boundary = extract_ordered_boundary_from_edges(face)
     if boundary and len(boundary) >= 3:
-        return boundary
-    return extract_face_vertices_simple(face)
+        return boundary, True
+    return extract_face_vertices_simple(face), False
 def get_unit_name():
     try:
         if Units.Current == UnitTypes.Inches:
@@ -390,11 +429,16 @@ def calculate_face_properties(face):
         face_name = str(face.Name)
     except:
         pass
-    vertices_3d = extract_face_boundary(face)
+    vertices_3d, is_ordered = extract_face_boundary(face)
     if vertices_3d is None or len(vertices_3d) < 3:
         raise ValueError("Could not extract face boundary")
     origin, u_axis, v_axis, normal = get_face_plane_basis(vertices_3d)
     vertices_2d = project_to_2d(vertices_3d, origin, u_axis, v_axis)
+    if not is_ordered:
+        # Fallback vertices come back in arbitrary order; order them by angle
+        # about their centroid (same approach as adding-more-geometry-types.py)
+        # before the shoelace polygon math so area/centroid/inertia are correct.
+        vertices_2d = order_vertices_by_angle(vertices_2d)
     vertices_2d = remove_duplicate_vertices(vertices_2d)
     if len(vertices_2d) < 3:
         raise ValueError("Face has fewer than 3 unique vertices")

@@ -65,17 +65,19 @@ class AnnulusProperties:
     """Analytical properties for a ring/annular cross-section (hollow circle)"""
     
     def __init__(self, outer_radius, inner_radius, center_x=0.0, center_y=0.0):
-        self.outer_radius = outer_radius
-        self.inner_radius = inner_radius
         self.n = 0
-        
+
         R = outer_radius  # Outer radius
         r = inner_radius  # Inner radius
-        
+
         # Ensure R > r
         if R < r:
             R, r = r, R
-        
+
+        # Store corrected radii so reported values match the math
+        self.outer_radius = R
+        self.inner_radius = r
+
         A = math.pi * (R**2 - r**2)
         I = math.pi * (R**4 - r**4) / 4.0
         

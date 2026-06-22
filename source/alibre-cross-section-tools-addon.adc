@@ -6,5 +6,5 @@
    <Menu text="alibre-cross-section-tools-addon"/>
    <Description>alibre-cross-section-tools-addon</Description> 
    <Workspace type="Always"/>
-   <Property name="Identifier" value="alibre-cross-section-tools-addon"/>
+   <Property name="Identifier" value="{DF2B4068-83FB-430F-8B57-3E0110F3C946}"/>
 </AlibreDesignAddOn>
